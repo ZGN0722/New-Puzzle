@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    tools:context=".PuzzGame"
+    >
+
+    <TextView
+        android:id="@+id/game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="拼图游戏"
+        android:textSize="50dp"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="选择图片进行游戏"
+        android:textSize="30dp"
+        android:layout_below="@id/game"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:id="@+id/start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开始游戏"
+        android:textSize="25dp"
+        android:layout_below="@+id/text1"
+        android:layout_centerHorizontal="true"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image1"
+        android:src="@drawable/back"
+        android:layout_width="150dp"
+        android:layout_height="200dp"
+        android:layout_below="@id/start"
+        android:layout_centerHorizontal="true"
+        />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/image2"
+        android:src="@drawable/timg"
+        android:layout_width="150dp"
+        android:layout_height="200dp"
+        android:layout_below="@id/image1"
+        android:layout_centerHorizontal="true"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="5dp"
+        />
+</RelativeLayout>
