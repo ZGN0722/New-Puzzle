@@ -35,14 +35,6 @@
         android:layout_below="@+id/text1"
         android:layout_centerHorizontal="true"
         />
-    <Button
-        android:id="@+id/timer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="计时器"
-        android:textSize="25dp"
-        android:layout_below="@+id/image2"
-        android:layout_centerHorizontal="true"/>
 
     <ImageView
         android:id="@+id/image1"

@@ -3,6 +3,7 @@ package com.example.puzzlegame;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +18,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -34,6 +37,7 @@ public class SQLAdmin extends AppCompatActivity {
     private PaperDBHelper mHelper = new PaperDBHelper(this);
     private ArrayList<QuestionInfo> Q = new ArrayList<QuestionInfo>();
     private ArrayList<OptionInfo> O =new ArrayList<OptionInfo>();
+    private String ans;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +83,23 @@ public class SQLAdmin extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                O = mHelper.query_O("Option_id = '" + Q.get(position).get_id() + "'");
                 String result = parent.getItemAtPosition(position).toString();//获取选择项的值
-                Toast.makeText(SQLAdmin.this,"您点击了"+result,Toast.LENGTH_SHORT).show();
+                //Toast.makeText(SQLAdmin.this,"您点击了"+result,Toast.LENGTH_SHORT).show();
+                //修改单词
+                new AlertDialog.Builder(SQLAdmin.this)
+                        .setTitle(Q.get(position).getQuestion())//标题
+                        // 确定按钮及其动作
+                        .setMessage("\nA."+O.get(0).getContent()+"\nB."+O.get(1).getContent()
+                                +"\nC."+O.get(2).getContent()+"\nD."+O.get(3).getContent()+"\n正确答案为"+Q.get(position).getType())
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        })
+                        //取消按钮及其动作
+                        .create()//创建对话框
+                        .show();//显示对话框
             }
         });
 
@@ -130,15 +149,25 @@ public class SQLAdmin extends AppCompatActivity {
     public void update(String str) {
         Q = mHelper.query_Q("question = '" + str + "'");
         O = mHelper.query_O("Option_id = '" + Q.get(0).get_id() + "'");
-        final TableLayout tableLayout = (TableLayout) getLayoutInflater().inflate(R.layout.insert, null);
+        final RelativeLayout tableLayout = (RelativeLayout) getLayoutInflater().inflate(R.layout.insert, null);
+        RadioGroup rg = tableLayout.findViewById(R.id.txt_ans);
+        initRg(rg);
+        //设置单选组被选择的框
+        if(Q.get(0).getType().equals("B")){
+            rg.check(R.id.ans_B);
+        }
+        else if(Q.get(0).getType().equals("C")){
+            rg.check(R.id.ans_C);
+        }
+        else if(Q.get(0).getType().equals("D")){
+            rg.check(R.id.ans_D);
+        }
         EditText txt_q = ((EditText)tableLayout.findViewById(R.id.txt_question));
-        EditText txt_t = ((EditText)tableLayout.findViewById(R.id.txt_type));
         EditText txt_a = ((EditText)tableLayout.findViewById(R.id.txt_A));
         EditText txt_b = ((EditText)tableLayout.findViewById(R.id.txt_B));
         EditText txt_c = ((EditText)tableLayout.findViewById(R.id.txt_C));
         EditText txt_d = ((EditText)tableLayout.findViewById(R.id.txt_D));
         txt_q.setText(Q.get(0).getQuestion());
-        txt_t.setText(Q.get(0).getType());
         txt_a.setText(O.get(0).getContent());
         txt_b.setText(O.get(1).getContent());
         txt_c.setText(O.get(2).getContent());
@@ -152,14 +181,13 @@ public class SQLAdmin extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                         String str_question = ((EditText) tableLayout.findViewById(R.id.txt_question)).getText().toString();
-                        String str_type = ((EditText) tableLayout.findViewById(R.id.txt_type)).getText().toString();
                         String str_A = ((EditText) tableLayout.findViewById(R.id.txt_A)).getText().toString();
                         String str_B = ((EditText) tableLayout.findViewById(R.id.txt_B)).getText().toString();
                         String str_C = ((EditText) tableLayout.findViewById(R.id.txt_C)).getText().toString();
                         String str_D = ((EditText) tableLayout.findViewById(R.id.txt_D)).getText().toString();
 
                         Q.get(0).setQuestion(str_question);
-                        Q.get(0).setType(str_type);
+                        Q.get(0).setType(ans);
                         mHelper.update_Q(Q.get(0),"question = '" + str + "'");
 
                         O.get(0).setContent(str_A);
@@ -186,7 +214,9 @@ public class SQLAdmin extends AppCompatActivity {
 
     //新增对话框
     private void InsertDialog() {
-        final TableLayout tableLayout = (TableLayout) getLayoutInflater().inflate(R.layout.insert, null);
+        final RelativeLayout tableLayout = (RelativeLayout) getLayoutInflater().inflate(R.layout.insert, null);
+        RadioGroup rg = tableLayout.findViewById(R.id.txt_ans);
+        initRg(rg);
         new AlertDialog.Builder(this)
                 .setTitle("新增问题")//标题
                 .setView(tableLayout)//设置视图
@@ -195,7 +225,7 @@ public class SQLAdmin extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String str_question = ((EditText)tableLayout.findViewById(R.id.txt_question)).getText().toString();
-                        String str_type = ((EditText)tableLayout.findViewById(R.id.txt_type)).getText().toString();
+                        String str_type = ans;
                         String str_A = ((EditText)tableLayout.findViewById(R.id.txt_A)).getText().toString();
                         String str_B = ((EditText)tableLayout.findViewById(R.id.txt_B)).getText().toString();
                         String str_C = ((EditText)tableLayout.findViewById(R.id.txt_C)).getText().toString();
@@ -239,5 +269,27 @@ public class SQLAdmin extends AppCompatActivity {
                 })
                 .create()//创建对话框
                 .show();//显示对话框
+    }
+
+    public void initRg(RadioGroup rg) {
+        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.ans_A:
+                        ans="A";
+                        break;
+                    case R.id.ans_B:
+                        ans="B";
+                        break;
+                    case R.id.ans_C:
+                        ans="C";
+                        break;
+                    case R.id.ans_D:
+                        ans="D";
+                        break;
+                }
+            }
+        });
     }
 }

@@ -21,6 +21,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -40,6 +41,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Albums extends Activity {
     private static final Uri IMAGE_URI = Uri.parse("/sdcard/Pictures");;
@@ -206,6 +209,8 @@ public class Albums extends Activity {
     }
 
     private void displayImage(String imagePath) {
+        PermisssionUtil.requestPermission(Albums.this);
+
         if (imagePath != null) {
             /*BitmapFactory.Options opts = new BitmapFactory.Options();
             opts.inJustDecodeBounds = true;
@@ -217,13 +222,44 @@ public class Albums extends Activity {
             bitmap = BitmapFactory.decodeFile(imagePath, opts);
             //将图片放置在控件上
             albumsPicture.setImageBitmap(bitmap);*/
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            Bitmap bm = BitmapFactory.decodeFile(imagePath);
             //Toast.makeText(this, "得到图片成功", Toast.LENGTH_SHORT).show();
             Toast.makeText(this, imagePath, Toast.LENGTH_SHORT).show();
-            albumsPicture.setImageBitmap(bitmap);
+            /*DisplayMetrics dm = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(dm);
+            int screenWidth=dm.widthPixels;
+            if(bm.getWidth()<=screenWidth){
+                albumsPicture.setImageBitmap(bm);
+            }else{
+                Bitmap bmp=Bitmap.createScaledBitmap(bm, screenWidth, bm.getHeight()*screenWidth/bm.getWidth(), true);
+                albumsPicture.setImageBitmap(bmp);
+            }*/
+            albumsPicture.setImageBitmap(bm);
         } else {
             Toast.makeText(this, "得到图片失败", Toast.LENGTH_SHORT).show();
         }
     }
+    public static class PermisssionUtil {
 
+        // Storage Permissions
+        private static final int REQUEST_EXTERNAL_STORAGE = 1;
+        private static String[] PERMISSIONS_STORAGE = {
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        };
+
+        //android6.0之后要动态获取权限
+        public static void requestPermission(Activity activity) {
+            int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            //检测是否有写的权限
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                // 没有写的权限，去申请写的权限，会弹出对话框
+                ActivityCompat.requestPermissions(
+                        activity,
+                        PERMISSIONS_STORAGE,
+                        REQUEST_EXTERNAL_STORAGE
+                );
+            }
+        }
+    }
 }
