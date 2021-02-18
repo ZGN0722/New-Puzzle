@@ -209,7 +209,6 @@ public class PaperDBHelper extends SQLiteOpenHelper {
         //执行更新记录动作，该语句返回记录更新的数目
         return mDB.update(TABLE_2, cv, condition, null);
     }
-
     public int update_O(OptionInfo info, String condition){
         ContentValues cv = new ContentValues();
         cv.put("_id",info.get_id());

@@ -1,12 +1,17 @@
 package com.example.puzzlegame;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.widget.EditText;
+import android.widget.TableLayout;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.puzzlegame.game.MainView;
@@ -28,8 +33,8 @@ public class PuzzGame extends AppCompatActivity {
         Intent intent = getIntent();
         String back = intent.getStringExtra("back");
         int level = Integer.valueOf(intent.getStringExtra("level"));
-        setContentView(new MainView(this,back,level));
 
+        setContentView(new MainView(this,back,level));
     }
 
 

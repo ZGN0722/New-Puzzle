@@ -10,16 +10,31 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TableLayout;
+import android.widget.TextView;
 
 import com.example.puzzlegame.PuzzGame;
+import com.example.puzzlegame.R;
 import com.example.puzzlegame.util.MLog;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Currency;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainView extends View {
+    private int recLen = 0;
+    Canvas canvas ;
+    Timer timer = new Timer();
+
     private static final String TAG = MainView.class.getSimpleName();
     private Context context;
     private Bitmap back;
@@ -41,7 +56,27 @@ public class MainView extends View {
 
     int steps = 0;
 
+    TimerTask task = new TimerTask() {
+        @Override
+        public void run() {
+            recLen++;
+            invalidate();
+            //Log.i("Time",String.valueOf(recLen));
+        }
+    };
+
     public MainView(Context context,String image,int level) {
+        super(context);
+        this.COL=level;
+        this.ROW=level;
+        this.context = context;
+        paint = new Paint();
+        paint.setAntiAlias(true);
+        init(image);
+        startGame();
+        MLog.d(TAG, PuzzGame.getScreenWidth() + "," +PuzzGame.getScreenHeight());
+    }
+    public MainView(Context context,Bitmap image,int level) {
         super(context);
         this.COL=level;
         this.ROW=level;
@@ -60,7 +95,7 @@ public class MainView extends View {
         try {
             InputStream assetInputStream = assetManager.open(image);
             Bitmap bitmap = BitmapFactory.decodeStream(assetInputStream);
-            back = Bitmap.createScaledBitmap(bitmap, PuzzGame.getScreenWidth(), PuzzGame.getScreenHeight(), true);
+            back = Bitmap.createScaledBitmap(bitmap, 1080, 2085, true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,8 +109,22 @@ public class MainView extends View {
             }
         }
     }
+    private void init(Bitmap bitmap) {
+        back = Bitmap.createScaledBitmap(bitmap, 1080, 2085, true);
+        tileWidth = back.getWidth() / COL;
+        tileHeight = back.getHeight() / ROW;
+        bitmapTiles = new Bitmap[COL * ROW];
+        int idx = 0;
+        for (int i = 0; i < ROW; i++) {
+            for (int j = 0; j < COL; j++) {
+                bitmapTiles[idx++] = Bitmap.createBitmap(back, j * tileWidth, i * tileHeight, tileWidth, tileHeight);
+            }
+        }
+    }
 
     private void startGame() {
+        timer.schedule(task, 1000, 1000);
+
         tilesBoard = new Board();
         dataTiles = tilesBoard.createRandomBoard(ROW, COL);
         isSuccess = false;
@@ -86,13 +135,53 @@ public class MainView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawColor(Color.GRAY);
+        this.canvas=canvas;
         for (int i = 0; i < ROW; i++) {
             for (int j = 0; j < COL; j++) {
                 int idx = dataTiles[i][j];
                 if (idx == ROW * COL - 1 && !isSuccess)
                     continue;
+                Bitmap time = fromText(100, "时间:" + String.valueOf(recLen));
+                canvas.drawBitmap(time,0,0, paint);
+                Bitmap steps = fromText(100, "步数:" + String.valueOf(this.steps));
+                canvas.drawBitmap(steps,0,100, paint);
                 canvas.drawBitmap(bitmapTiles[idx], j * tileWidth, i * tileHeight, paint);
             }
+        }
+        if(recLen==5 || recLen==10) {
+            timer.cancel();
+            timer=null;
+            task.cancel();
+            task=null;
+            final TableLayout tableLayout = (TableLayout) LayoutInflater.from(context).inflate(R.layout.insert, null);
+            new androidx.appcompat.app.AlertDialog.Builder(context)
+                    .setTitle("新增问题")//标题
+                    .setView(tableLayout)//设置视图
+                    // 确定按钮及其动作
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            timer = new Timer();
+                            task = new TimerTask() {
+                                @Override
+                                public void run() {
+                                    recLen++;
+                                    invalidate();
+                                    //Log.i("Time",String.valueOf(recLen));
+                                }
+                            };
+                            timer.schedule(task, 1000, 1000);
+                        }
+                    })
+                    //取消按钮及其动作
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    })
+                    .create()//创建对话框
+                    .show();//显示对话框
         }
     }
 
@@ -122,9 +211,10 @@ public class MainView extends View {
                         dataTiles[newY][newX] = temp;
                         invalidate();
                         if (tilesBoard.isSuccess(dataTiles)) {
+                            timer.cancel();
                             isSuccess = true;
                             invalidate();
-                            String successText = String.format("恭喜你拼图成功，移动了%d次", steps);
+                            String successText = String.format("恭喜你拼图成功\n移动了%d次\n花费了%d秒", steps, recLen);
                             new AlertDialog.Builder(context)
                                     .setTitle("拼图成功")
                                     .setCancelable(false)
@@ -163,4 +253,25 @@ public class MainView extends View {
         }
         MLog.d(TAG, sb.toString());
     }
+
+    public static Bitmap fromText(float textSize, String text) {
+        Paint paint = new Paint();
+        paint.setTextSize(textSize);
+        paint.setTextAlign(Paint.Align.LEFT);
+        paint.setColor(Color.BLACK);
+
+        Paint.FontMetricsInt fm = paint.getFontMetricsInt();
+
+        int width = (int)paint.measureText(text);
+        int height = fm.descent - fm.ascent;
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawText(text, 0, fm.leading - fm.ascent, paint);
+        canvas.save();
+
+        return bitmap;
+    }
+
+
 }

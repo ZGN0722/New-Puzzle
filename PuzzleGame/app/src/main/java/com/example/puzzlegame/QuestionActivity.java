@@ -38,15 +38,15 @@ public class QuestionActivity extends AppCompatActivity {
         /*info_P.set_id(1);
         info_P.setTitle("问卷一2.0");
         info_P.setPreface("完成问卷以进行拼图");
-        infoArray_P.add(info_P);
+        infoArray_P.add(info_P);*/
 
-        info_Q.set_id(1);
+        /*info_Q.set_id(2);
         info_Q.setPaper_id(1);
         info_Q.setType("单选");
-        info_Q.setQuestion("你喜欢拼图么？2.0");
-        infoArray_Q.add(info_Q);
+        info_Q.setQuestion("拼图么？");
+        infoArray_Q.add(info_Q);*/
 
-        info_O.set_id(1);
+        /*info_O.set_id(1);
         info_O.setContent("喜欢2.0");
         info_O.setValue("A");
         info_O.setOption_id(1);
@@ -66,6 +66,8 @@ public class QuestionActivity extends AppCompatActivity {
         mHelper =PaperDBHelper.getInstance(this, 2);
         mHelper.openWriteLink();
         mHelper.openReadLink();
+        /*infoArray_Q = mHelper.query_Q("paper_id = 1");
+        infoArray_O = mHelper.query_O("paper_id = 1");*/
 
         /*mHelper.update_P(info_P, "_id = 1");
         mHelper.update_Q(info_Q, "_id = 1");
@@ -74,15 +76,15 @@ public class QuestionActivity extends AppCompatActivity {
         if(insert == -1)
             Log.i("insert","插入问卷失败");
         else
-            Log.i("insert","插入问卷成功");
+            Log.i("insert","插入问卷成功");*/
 
-        insert = mHelper.insert_Q(infoArray_Q);
+        /*Long insert = mHelper.insert_Q(infoArray_Q);
         if(insert == -1)
             Log.i("insert","插入问题失败");
         else
-            Log.i("insert","插入问题成功");
+            Log.i("insert","插入问题成功");*/
 
-        insert = mHelper.insert_O(infoArray_O);
+        /*insert = mHelper.insert_O(infoArray_O);
         if(insert == -1)
             Log.i("insert","插入选项失败");
         else
@@ -94,7 +96,7 @@ public class QuestionActivity extends AppCompatActivity {
         else
             Log.i("insert","插入答案成功");*/
 
-        TextView text1 = findViewById(R.id.question1);
+        /*TextView text1 = findViewById(R.id.question1);
         text1.setText(String.format(mHelper.query_P("_id = 1").get(0).getTitle()));
 
         TextView text2 = findViewById(R.id.question2);
@@ -104,7 +106,7 @@ public class QuestionActivity extends AppCompatActivity {
         text3.setText(String.format(mHelper.query_O("_id = 1").get(0).getValue()) + "." + String.format(mHelper.query_O("_id = 1").get(0).getContent()));
 
         TextView text4 = findViewById(R.id.question4);
-        text4.setText(String.format(mHelper.query_A("_id = 1").get(0).getAnswer_value()));
+        text4.setText(String.format(mHelper.query_A("_id = 1").get(0).getAnswer_value()));*/
     }
 
     //在App生命周期的onStop方法中关闭数据库

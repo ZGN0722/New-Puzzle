@@ -7,8 +7,23 @@
     tools:context=".SQLAdmin">
 
     <TextView
+        android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="题库管理"
         android:textSize="25dp"/>
+
+    <ListView
+        android:id="@+id/list_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_title"/>
+
+    <Button
+        android:id="@+id/item_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="添加问题"
+        android:layout_below="@id/list_question"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>

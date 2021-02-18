@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,9 +16,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.puzzlegame.PuzzGame;
-import com.example.puzzlegame.QuestionActivity;
 import com.example.puzzlegame.R;
 import com.example.puzzlegame.SQLAdmin;
+import com.example.puzzlegame.picture;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         View image1 = findViewById(R.id.image1);
         View image2 = findViewById(R.id.image2);
         Button button1 = findViewById(R.id.start);
-
         //共享参数
         /*SharedPreferences shared = getSharedPreferences("share",MODE_PRIVATE);
         SharedPreferences.Editor editor = shared.edit();
@@ -49,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.setClass(MainActivity.this, PuzzGame.class);
                 intent.putExtra("back", "back.jpg");
                 intent.putExtra("level", String.valueOf(level));
-                Log.i("123",String.valueOf(level));
+                //Log.i("123",String.valueOf(level));
                 startActivityForResult(intent,0);
             }
         });
@@ -67,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent();
-                intent.setClass(MainActivity.this, QuestionActivity.class);
+                //intent.setClass(MainActivity.this, QuestionActivity.class);
+                intent.setClass(MainActivity.this, picture.class);
                 startActivityForResult(intent,0);
             }
         });

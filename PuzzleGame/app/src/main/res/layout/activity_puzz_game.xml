@@ -30,13 +30,21 @@
         android:id="@+id/start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="开始游戏"
+        android:text="自定义背景"
         android:textSize="25dp"
         android:layout_below="@+id/text1"
         android:layout_centerHorizontal="true"
         />
+    <Button
+        android:id="@+id/timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="计时器"
+        android:textSize="25dp"
+        android:layout_below="@+id/image2"
+        android:layout_centerHorizontal="true"/>
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/image1"
         android:src="@drawable/back"
         android:layout_width="150dp"
@@ -44,7 +52,7 @@
         android:layout_below="@id/start"
         android:layout_centerHorizontal="true"
         />
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/image2"
         android:src="@drawable/timg"
         android:layout_width="150dp"
@@ -54,4 +62,5 @@
         android:scaleType="centerCrop"
         android:layout_marginTop="5dp"
         />
+
 </RelativeLayout>
